@@ -3,11 +3,13 @@ FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Pythonとビルドツールのインストール
+# ★ここに ninja-build を追加しました
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     build-essential \
     cmake \
+    ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -22,5 +24,3 @@ RUN pip3 install --no-cache-dir llama-cpp-python
 
 # モデル配置用ディレクトリ作成
 RUN mkdir -p /app/models
-
-# ※ Dev Containerで使用するため ENTRYPOINT は記述しません
