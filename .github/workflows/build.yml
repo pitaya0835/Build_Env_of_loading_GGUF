@@ -1,0 +1,31 @@
+name: Build and Export GGUF Chat Container
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # GitHubのWeb画面から手動実行できるようにする
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t gguf-chat:latest .
+
+      - name: Save Docker image to tar archive
+        run: |
+          docker save -o gguf-chat-image.tar gguf-chat:latest
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gguf-chat-container
+          path: gguf-chat-image.tar
+          retention-days: 7 # 7日間保持
