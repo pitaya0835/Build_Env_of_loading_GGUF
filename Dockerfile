@@ -14,6 +14,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+# ★追加: GitHub Actions(GPUなし環境)でのビルドエラーを回避するための設定
+ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64/stubs:${LD_LIBRARY_PATH}"
+RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
+
 # GPU (CUDA) サポートを有効にしてllama-cpp-pythonをビルド・インストール
 ENV CMAKE_ARGS="-DGGML_CUDA=on"
 ENV FORCE_CMAKE="1"
