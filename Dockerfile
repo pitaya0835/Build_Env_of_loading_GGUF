@@ -19,7 +19,7 @@ ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64/stubs:${LD_LIBRARY_PATH}"
 RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
 # GPU (CUDA) サポートを有効にしてllama-cpp-pythonをビルド・インストール
-ENV CMAKE_ARGS="-DGGML_CUDA=on"
+ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=all"
 ENV FORCE_CMAKE="1"
 RUN pip3 install --no-cache-dir llama-cpp-python
 
