@@ -1,12 +1,9 @@
-# CUDAツールキットが含まれたNVIDIA公式イメージを使用
-FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
+# ★ここが最大の変更点：WSL2で実績のあるPyTorchの安定版を土台にします
+FROM pytorch/pytorch:2.2.1-cuda12.1-cudnn8-devel
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Pythonとビルドツールのインストール
-# ★ここに ninja-build を追加しました
+# PyTorchイメージには既にPython等が入っているため、必要なビルドツールだけ追加
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
     build-essential \
     cmake \
     ninja-build \
@@ -14,17 +11,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# ★追加: GitHub Actions(GPUなし環境)でのビルドエラーを回避するための設定
-ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64/stubs:${LD_LIBRARY_PATH}"
-RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
-
-# GPU (CUDA) サポートを有効にしてllama-cpp-pythonをビルド・インストール
+# llama-cpp-pythonのGPUビルド（RTX 5070 Ti用のアーキテクチャ89指定）
 ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=89"
 ENV FORCE_CMAKE="1"
-RUN pip3 install --no-cache-dir llama-cpp-python
-
-# 必要なPythonパッケージがあれば追加
-# RUN pip3 install ...
-
-# モデル配置用ディレクトリ作成
-RUN mkdir -p /app/models
+RUN pip install --no-cache-dir llama-cpp-python
