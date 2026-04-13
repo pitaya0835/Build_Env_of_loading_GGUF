@@ -2,20 +2,10 @@
 FROM pytorch/pytorch:2.2.1-cuda12.1-cudnn8-devel
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 必要なビルドツールのインストール
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    cmake \
-    ninja-build \
-    && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
-# ★ここがPyTorch(Conda)環境特有のバグ回避策★
-# 邪魔なCondaのリンカーを削除し、システム標準のものを使わせる
-RUN rm -f /opt/conda/compiler_compat/ld
+# ★ここが特効薬：自力コンパイルを回避し、公式の「CUDA 12.1用完成品」をインストールする
+RUN pip install --no-cache-dir llama-cpp-python \
+    --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
 
-# llama-cpp-pythonのGPUビルド（RTX 5070 Ti用のアーキテクチャ89指定）
-ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=89"
-ENV FORCE_CMAKE="1"
-RUN pip install --no-cache-dir llama-cpp-python
+# （※Condaのld削除や、CMAKE_ARGSの設定、ninja-buildのインストールすら不要になります）
