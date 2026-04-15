@@ -4,8 +4,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
-# ★ここが特効薬：自力コンパイルを回避し、公式の「CUDA 12.1用完成品」をインストールする
+# ★ここを追加：GitHub Actions（オンライン）の時点でC++ライブラリを最新にしておく
+RUN conda install -y -c conda-forge libstdcxx-ng
+
+# llama-cpp-pythonの公式完成品をインストール
 RUN pip install --no-cache-dir llama-cpp-python \
     --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
-
-# （※Condaのld削除や、CMAKE_ARGSの設定、ninja-buildのインストールすら不要になります）
