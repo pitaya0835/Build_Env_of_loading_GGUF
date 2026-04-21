@@ -19,6 +19,6 @@ RUN rm -f /opt/conda/compiler_compat/ld
 RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib/x86_64-linux-gnu/libcuda.so.1 || true
 
 # 3. ご自身のRTX 5070 Ti (アーキテクチャ89) 用に自力で完全コンパイル
-ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=89"
+ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=89 -DGGML_NATIVE=OFF"
 ENV FORCE_CMAKE="1"
 RUN pip install --no-cache-dir llama-cpp-python
